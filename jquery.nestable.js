@@ -42,6 +42,7 @@
             collapsedClass  : 'dd-collapsed',
             placeClass      : 'dd-placeholder',
             noDragClass     : 'dd-nodrag',
+            noChildrenClass : 'dd-nochildren',
             emptyClass      : 'dd-empty',
             expandBtnHTML   : '<button data-action="expand" type="button">Expand</button>',
             collapseBtnHTML : '<button data-action="collapse" type="button">Collapse</button>',
@@ -359,26 +360,30 @@
                 // reset move distance on x-axis for new phase
                 mouse.distAxX = 0;
                 prev = this.placeEl.prev(opt.itemNodeName);
-                // increase horizontal level if previous sibling exists and is not collapsed
-                if (mouse.distX > 0 && prev.length && !prev.hasClass(opt.collapsedClass)) {
-                    // cannot increase level when item above is collapsed
-                    list = prev.find(opt.listNodeName).last();
-                    // check if depth limit has reached
-                    depth = this.placeEl.parents(opt.listNodeName).length;
-                    if (depth + this.dragDepth <= opt.maxDepth) {
-                        // create new sub-level if one doesn't exist
-                        if (!list.length) {
-                            list = $('<' + opt.listNodeName + '/>').addClass(opt.listClass);
-                            list.append(this.placeEl);
-                            prev.append(list);
-                            this.setParent(prev);
-                        } else {
-                            // else append to next level up
-                            list = prev.children(opt.listNodeName).last();
-                            list.append(this.placeEl);
-                        }
-                    }
-                }
+                // some items might not permit sub-items
+                if (!prev.hasClass(opt.noChildrenClass))
+                {
+	                // increase horizontal level if previous sibling exists and is not collapsed
+	                if (mouse.distX > 0 && prev.length && !prev.hasClass(opt.collapsedClass)) {
+	                    // cannot increase level when item above is collapsed
+	                    list = prev.find(opt.listNodeName).last();
+	                    // check if depth limit has reached
+	                    depth = this.placeEl.parents(opt.listNodeName).length;
+	                    if (depth + this.dragDepth <= opt.maxDepth) {
+	                        // create new sub-level if one doesn't exist
+	                        if (!list.length) {
+	                            list = $('<' + opt.listNodeName + '/>').addClass(opt.listClass);
+	                            list.append(this.placeEl);
+	                            prev.append(list);
+	                            this.setParent(prev);
+	                        } else {
+	                            // else append to next level up
+	                            list = prev.children(opt.listNodeName).last();
+	                            list.append(this.placeEl);
+	                        }
+	                    }
+	                }
+	            }
                 // decrease horizontal level
                 if (mouse.distX < 0) {
                     // we can't decrease a level if an item preceeds the current one
